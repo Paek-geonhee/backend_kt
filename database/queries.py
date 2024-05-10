@@ -1,4 +1,5 @@
 from database.dbConfig import conn, cursor
+import base64
 
 ## 생성
 # 데이터베이스 생성 함수
@@ -33,11 +34,20 @@ def insert_record(table_name: str, values: dict) -> None:
     values는 {애트리뷰트: 값} 형태로 입력, dict임
     """
     columns = ', '.join(values.keys())
-    placeholders = ', '.join(['%s' for _ in range(len(values))])
-    query = "INSERT INTO " + table_name + " (" + columns + ") VALUES (" + placeholders + ");"
-    cursor.execute(query, tuple(values.values()))
+    placeholders = ', '.join(['%s'] * len(values))  # 플레이스홀더 생성 (%s를 값의 개수만큼 반복)
+    query = f"INSERT INTO {table_name} ({columns}) VALUES ({placeholders});"
+
+    # 쿼리 문자열 출력 (디버깅용)
+    print(query)
+
+    # 숫자 데이터를 포함한 튜플 생성
+    value_tuple = tuple(values.values())
+
+    # 쿼리 실행
+    cursor.execute(query, value_tuple)
     conn.commit()
-    
+
+
 # 레코드 조회 함수
 def select_records(table_name: str, conditions: str = None) -> list:
     if conditions:
@@ -49,17 +59,27 @@ def select_records(table_name: str, conditions: str = None) -> list:
     
 # 특정 레코드의 특정 애트리뷰트 조회 함수
 def select_attrs(table_name: str, attr_name: str, conditions: str = None) -> list:
-    if conditions:
-        query = "SELECT " + attr_name + " FROM " + table_name + " WHERE " + conditions + ";"
-    else:
-        query = "SELECT " + attr_name + " FROM " + table_name + ";"
-    cursor.execute(query)
-    return cursor.fetchall()
+    try:
+        if conditions:
+            query = f"SELECT {attr_name} FROM {table_name} WHERE {conditions};"
+        else:
+            query = f"SELECT {attr_name} FROM {table_name};"
+
+        print(query)  # 쿼리 확인 (디버깅용)
+
+        cursor.execute(query)
+        print("done")  # 쿼리 실행 완료 시 출력 (디버깅용)
+
+        return cursor.fetchall()
+    except Exception as e:
+        print(f"Error occurred during query execution: {e}")
+        return []  # 빈 리스트 반환 또는 예외 처리에 따라 적절한 처리 수행
 
 # 조건 만족하는 부분 변경
 def update_record(table_name: str, values: dict, conditions: str) -> None:
     set_values = ', '.join([column + "=%s" for column in values.keys()])
-    query = "UPDATE " + table_name + " SET " + set_values + " WHERE " + conditions + ";"
+
+    query = f"UPDATE {table_name} SET {set_values} WHERE {conditions};"
     cursor.execute(query, tuple(values.values()))
     conn.commit()
 
