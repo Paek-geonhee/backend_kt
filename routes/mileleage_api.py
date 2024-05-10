@@ -12,8 +12,7 @@ from functions.imagePrediction.mileleage import product
 # 라우터 객체
 router = APIRouter(prefix="/mileleage")
 
-<<<<<<< HEAD
-=======
+
 
 min_gap = 30
 
@@ -24,11 +23,8 @@ def update_mileleage(mlg, id, name):
     cur_mile = int(q.select_attrs('userdata', 'mileleage', condition)[0]) + mlg
 
     q.update_record('userdata','mileleage = {cur_mile}', condition)
-    
 
 
-
->>>>>>> 705fa18a19adbe70f19f8ddbab56445413e7287a
 # /mileleage/flogging
 @router.post("/flogging")
 async def mileleage_flogging(image: FloggingStart, request: Request):
@@ -122,13 +118,10 @@ async def mileleage_flogging(image: FloggingStart, request: Request):
     
     
         
-<<<<<<< HEAD
-    
-=======
+
     # start_image와 end_image 업로드 시간 차이 30분 이상
     # 현재 타입 str이니까 적당히 변경
     # AI 모델 삽입해서
->>>>>>> 705fa18a19adbe70f19f8ddbab56445413e7287a
     
     
     
