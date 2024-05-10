@@ -11,10 +11,13 @@ from models.mileleage_models import FloggingStart
 # 라우터 객체
 router = APIRouter(prefix="/mileleage")
 
+<<<<<<< HEAD
+=======
 
 
 
 
+>>>>>>> 705fa18a19adbe70f19f8ddbab56445413e7287a
 # /mileleage/flogging
 @router.post("/flogging")
 async def mileleage_flogging(image: FloggingStart, request: Request):
@@ -89,9 +92,13 @@ async def mileleage_flogging(image: FloggingStart, request: Request):
     
     
         
+<<<<<<< HEAD
+    
+=======
     # start_image와 end_image 업로드 시간 차이 30분 이상
     # 현재 타입 str이니까 적당히 변경
     # AI 모델 삽입해서
+>>>>>>> 705fa18a19adbe70f19f8ddbab56445413e7287a
     
     
     
