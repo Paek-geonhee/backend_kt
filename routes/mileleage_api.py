@@ -13,6 +13,8 @@ from functions.imagePrediction.mileleage import product
 router = APIRouter(prefix="/mileleage")
 
 
+min_gap = 30
+
 def update_mileleage(mlg, id, name):
 
     condition = 'id = "' + str(id)+'" and user_name = "'+str(name)+'"'
@@ -96,7 +98,7 @@ async def mileleage_flogging(image: FloggingStart, request: Request):
             # 시간 간격이 30분 이상일 경우 마일리지를 갱신하고 이미지 정보를 제거
             # 만약 시간 간격이 30분 미만일 경우 마일리지 갱신을 수행하지 않고 result에 1을 담아 클라이언트에게 전송
             result = 1
-            if dt3 >= 30:
+            if dt3 >= min_gap:
                 update_mileleage(mileleage, cookies["id"], cookies["user_name"])
                 q.delete_record('floggingimage', condition)
                 result = 0
