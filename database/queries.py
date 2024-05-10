@@ -83,9 +83,22 @@ def update_record(table_name: str, values: dict, conditions: str) -> None:
     cursor.execute(query, tuple(values.values()))
     conn.commit()
 
+<<<<<<< HEAD
+# 조건 만족하는 특정 애트리뷰트 변경
+def update_attrs(table_name: str, attr_name: str, value: str, conditions: str) -> None:
+    query = "UPDATE " + table_name + " SET " + attr_name + '= "' + value + '" WHERE ' + conditions + ';'
+    cursor.execute(query)
+    conn.commit()
+
 # 레코드 삭제 함수
 def delete_record(table_name: str, conditions: str) -> None:
     query = "DELETE FROM " + table_name + " WHERE " + conditions + ";"
+    print("쿼리", query)
+=======
+# 레코드 삭제 함수
+def delete_record(table_name: str, conditions: str) -> None:
+    query = "DELETE FROM " + table_name + " WHERE " + conditions + ";"
+>>>>>>> 705fa18a19adbe70f19f8ddbab56445413e7287a
     cursor.execute(query)
     conn.commit()
     

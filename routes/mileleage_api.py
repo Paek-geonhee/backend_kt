@@ -19,6 +19,7 @@ router = APIRouter(prefix="/mileleage")
 
 min_gap = 1
 
+
 def update_mileleage(mlg, user_id, user_name):
     condition = f"user_id = '{user_id}' and user_name = '{user_name}'"
 
@@ -29,6 +30,7 @@ def update_mileleage(mlg, user_id, user_name):
 
         # 업데이트할 값 딕셔너리 생성
         update_values = {'mileleage': current_mileage}
+
 
         try:
             # 레코드 업데이트
@@ -44,6 +46,9 @@ logging.basicConfig(
     level=logging.INFO,     # 로그 레벨 (INFO 수준 이상의 로그만 기록)
     format='%(asctime)s %(levelname)s: %(message)s'  # 로그 포맷
 )
+
+    q.update_record('userdata','mileleage = {cur_mile}', condition)
+
 
 
 # /mileleage/flogging
@@ -157,6 +162,7 @@ async def mileleage_flogging(request: Request, image: UploadFile = File(...)):
     
     
         
+
     # start_image와 end_image 업로드 시간 차이 30분 이상
     # 현재 타입 str이니까 적당히 변경
     # AI 모델 삽입해서

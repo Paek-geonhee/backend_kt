@@ -20,6 +20,10 @@ app.add_middleware(
 app.include_router(guideline_api.router)
 app.include_router(login_api.router)
 app.include_router(mileleage_api.router)
+<<<<<<< HEAD
+app.include_router(animalcatalog_api.router)
+=======
+>>>>>>> 705fa18a19adbe70f19f8ddbab56445413e7287a
     
 
 
