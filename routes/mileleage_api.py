@@ -7,6 +7,7 @@ import sys
 sys.path.append('../')
 import database.queries as q
 from models.mileleage_models import FloggingStart
+from functions.imagePrediction.mileleage import product
 
 # 라우터 객체
 router = APIRouter(prefix="/mileleage")
@@ -14,6 +15,16 @@ router = APIRouter(prefix="/mileleage")
 <<<<<<< HEAD
 =======
 
+min_gap = 30
+
+def update_mileleage(mlg, id, name):
+
+    condition = 'id = "' + str(id)+'" and user_name = "'+str(name)+'"'
+
+    cur_mile = int(q.select_attrs('userdata', 'mileleage', condition)[0]) + mlg
+
+    q.update_record('userdata','mileleage = {cur_mile}', condition)
+    
 
 
 
@@ -39,6 +50,7 @@ async def mileleage_flogging(image: FloggingStart, request: Request):
         }
     
     if(not data):
+        # 만약 유저 이미지 데이터가 없다면 빈 봉투를 처음 등록하는 경우임.
         try:
             image_data = image.value
             
@@ -61,27 +73,45 @@ async def mileleage_flogging(image: FloggingStart, request: Request):
             })
     else:
         try:
+
+            # 유저 정보 확인 후 기존에 등록된 이미지 데이터 로드
             condition = 'id="'+str(cookie_id)+'" and user_name="'+str(cookie_user_name)+'"'
             start_data = q.select_records('floggingimage', condition)
-            start_image = str(start_data[0][2])
+            
+            # 빈 봉투 이미지와 내용물이 든 봉투 이미지를 불러오고 시간 정보 체크
+            start_image = start_data[0][2]
             start_time = str(start_data[0][3])
             
-            end_image = str(image.value)
+            end_image = image.value
             end_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-            
-            q.delete_record('floggingimage', condition)
+
+
+            # 마일리지 생성 및 갱신 여부 확인
+            mileleage = product(start_image, end_image)
             
             dt1 = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
             dt2 = datetime.strptime(end_time, "%Y-%m-%d %H:%M:%S")
-            dt3 = str(dt2- dt1)
-            
+            time_difference = dt2 - dt1
+            minutes_difference = time_difference.total_seconds() / 60
+
+            # 시간 차이 설정
+            dt3 = minutes_difference # float
+
+
+            # 시간 간격이 30분 이상일 경우 마일리지를 갱신하고 이미지 정보를 제거
+            # 만약 시간 간격이 30분 미만일 경우 마일리지 갱신을 수행하지 않고 result에 1을 담아 클라이언트에게 전송
+            result = 1
+            if dt3 >= min_gap:
+                update_mileleage(mileleage, cookies["id"], cookies["user_name"])
+                q.delete_record('floggingimage', condition)
+                result = 0
+                
+                
+            # 통신 상태가 정상적이라면 결과 코드로 result를 전송
             return JSONResponse(status_code=200, content={
-                'type':"object",
-                "properties": {
-                    "time": dt3,
-                    "image" : start_image
-                }
-            })
+                                "type":"int",
+                                "result" : result}
+                                )
             
         except Exception as e:  
             return JSONResponse(status_code=500, content={

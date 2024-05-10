@@ -5,6 +5,7 @@ import numpy as np
 import tensorflow as tf
 from tensorflow.keras.models import Sequential
 from tensorflow.keras.layers import Conv2D, MaxPooling2D, Flatten, Dense
+from MLfunction import *
 
 import re
 
@@ -37,12 +38,7 @@ def find_jpeg_files(directory):
     jpeg_files = glob.glob(search_pattern)
     return jpeg_files
 
-# 이미지를 읽고 정규화하여 반환하는 함수
-def read_image(file_path, img_height, img_width):
-    image = cv2.imread(file_path)  # 이미지 읽기
-    image = cv2.resize(image, (img_width, img_height))  # 이미지 크기 조정
-    image = image.astype(np.float32) / 255.0  # 이미지 정규화
-    return image
+
 
 # 데이터 생성기 함수 (이미지 파일 경로와 정답 리스트를 입력으로 받아서 배치 데이터를 생성)
 def data_generator(image_files, labels, batch_size, img_height, img_width):
@@ -83,17 +79,6 @@ def preprocess_image(image_path, img_height, img_width):
     image = image.astype(np.float32) / 255.0  # 이미지 정규화
     return image
 
-def predict_content_amount(model, image_path, img_height, img_width):
-    # 이미지 전처리
-    input_image = read_image(image_path, img_height, img_width)
-    input_image = np.expand_dims(input_image, axis=0)  # 배치 차원 추가 (1, height, width, channels)
-
-    # 모델 예측
-    prediction = model.predict(input_image)
-
-    # 예측 결과 반환 (0에서 100 사이 값으로 클리핑)
-    content_amount = np.clip(prediction[0][0], 0, 100)
-    return content_amount
 # 메인 함수
 def main():
     masterPath = './functions/imagePrediction/'
@@ -127,16 +112,18 @@ def main():
     train_data_generator = data_generator(train_image_files, train_labels, batch_size, IMG_HEIGHT, IMG_WIDTH)
 
     # 모델 학습
-    steps_per_epoch = len(train_image_files) // batch_size
-    model.fit(train_data_generator, epochs=150, steps_per_epoch=steps_per_epoch)
+    #steps_per_epoch = len(train_image_files) // batch_size
+    #model.fit(train_data_generator, epochs=150, steps_per_epoch=steps_per_epoch)
 
     # 모델 저장
-    model.save("content_amount_prediction_model")
-
+    #model.save('imagePrediction.h5')
 
 
 # 학습된 모델 로드
-
+    # Recreate the exact same model, including its weights and the optimizer
+    model = tf.keras.models.load_model('imagePrediction.h5')
+    # Show the model architecture
+    model.summary()
 
 # 특정 이미지에 대한 결과 예측
     image_path = './test/test2.jpg'
