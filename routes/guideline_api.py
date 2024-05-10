@@ -7,7 +7,7 @@ from collections import Counter
 import sys
 sys.path.append('../')
 import database.queries as q
-from functions.guideliine_logic import search_in_db, extract_nouns
+from guideliine_logic import search_in_db, extract_nouns
 
 # 라우터 객체
 router = APIRouter(prefix="/guideline")
