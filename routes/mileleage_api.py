@@ -7,6 +7,7 @@ import sys
 sys.path.append('../')
 import database.queries as q
 from models.mileleage_models import FloggingStart
+from functions.imagePrediction.mileleage import product
 
 # 라우터 객체
 router = APIRouter(prefix="/mileleage")
@@ -60,12 +61,16 @@ async def mileleage_flogging(image: FloggingStart, request: Request):
         try:
             condition = 'id="'+str(cookie_id)+'" and user_name="'+str(cookie_user_name)+'"'
             start_data = q.select_records('floggingimage', condition)
-            start_image = str(start_data[0][2])
+            #start_image = str(start_data[0][2])
+            start_image = start_data[0][2]
             start_time = str(start_data[0][3])
             
-            end_image = str(image.value)
+            #end_image = str(image.value)
+            end_image = image.value
             end_time = str(datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
             
+            mileleage = product(start_image, end_image)
+
             q.delete_record('floggingimage', condition)
             
             dt1 = datetime.strptime(start_time, "%Y-%m-%d %H:%M:%S")
