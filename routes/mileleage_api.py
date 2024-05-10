@@ -30,6 +30,7 @@ def update_mileleage(mlg, id, name):
 @router.post("/flogging")
 async def mileleage_flogging(image: FloggingStart, request: Request):
     cookies = request.cookies
+    print("ck", cookies)
     try:
         cookie_id = cookies["id"]
         cookie_user_name = cookies["user_name"]
@@ -46,6 +47,7 @@ async def mileleage_flogging(image: FloggingStart, request: Request):
             "value": "unauthenticated user"
         }
     
+    ###
     if(not data):
         # 만약 유저 이미지 데이터가 없다면 빈 봉투를 처음 등록하는 경우임.
         try:
@@ -56,7 +58,7 @@ async def mileleage_flogging(image: FloggingStart, request: Request):
                 "user_name": cookie_user_name,
                 "start_image": image_data
             }
-            
+            print("values")
             q.insert_record('floggingimage', values)
                 
             return JSONResponse(status_code=200, content={
